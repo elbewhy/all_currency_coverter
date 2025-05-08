@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Currency Converter</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      padding: 40px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .card {
+      background: #e4f7f7;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      width: 100%;
+    }
+
+    .card h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 20px;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    img {
+      width: 35px;
+      height:36px ;
+      vertical-align: middle;
+      margin-right: 7px;
+    }
+
+    .flag-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background-color 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #2000eb;
+    }
+
+    #result {
+      margin-top: 20px;
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Currency Converter</h2>
+
+    <label>
+      Amount:
+      <input type="number" id="amount" placeholder="Enter amount" required />
+    </label>
+
+    <label>
+      From:
+      <div class="flag-group">
+        <img id="from_flag" src="" alt="From Flag" />
+        <select id="from_curr"></select>
+      </div>
+    </label>
+
+    <label>
+      To:
+      <div class="flag-group">
+        <img id="to_flag" src="" alt="To Flag" />
+        <select id="to_curr"></select>
+      </div>
+    </label>
+
+    <button onclick="convertCurrency()">Convert</button>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    const fromSelect = document.getElementById('from_curr');
+    const toSelect = document.getElementById('to_curr');
+    const fromFlag = document.getElementById('from_flag');
+    const toFlag = document.getElementById('to_flag');
+    const currencies = {};
+
+    fetch('https://restcountries.com/v3.1/all')
+      .then(response => response.json())
+      .then(data => {
+        data.forEach(country => {
+          if (country.currencies) {
+            Object.entries(country.currencies).forEach(([code, currency]) => {
+              if (!currencies[code]) {
+                currencies[code] = {
+                  name: currency.name,
+                  symbol: currency.symbol,
+                  flag: country.flags?.png || ''
+                };
+              }
+            });
+          }
+        });
+
+        populateDropdowns();
+      })
+      .catch(err => console.error('Failed to load currency data:', err));
+
+    function populateDropdowns() {
+      Object.entries(currencies).forEach(([code, { name, symbol }]) => {
+        const text = `${symbol || ''} ${code} - ${name}`;
+
+        const fromOption = document.createElement('option');
+        fromOption.value = code;
+        fromOption.textContent = text;
+        fromSelect.appendChild(fromOption);
+
+        const toOption = document.createElement('option');
+        toOption.value = code;
+        toOption.textContent = text;
+        toSelect.appendChild(toOption);
+      });
+
+      fromSelect.value = 'USD';
+      toSelect.value = 'NGN';
+      updateFlags();
+    }
+
+    function updateFlags() {
+      const from = currencies[fromSelect.value];
+      const to = currencies[toSelect.value];
+      fromFlag.src = from?.flag || '';
+      toFlag.src = to?.flag || '';
+    }
+
+    fromSelect.addEventListener('change', updateFlags);
+    toSelect.addEventListener('change', updateFlags);
+
+    function convertCurrency() {
+      const amount = parseFloat(document.getElementById('amount').value);
+      const fromCurrency = fromSelect.value;
+      const toCurrency = toSelect.value;
+      const apiKey = "adf7b271b13c7b581b037f4e"; 
+
+      if (!amount || isNaN(amount)) {
+        document.getElementById('result').textContent = "Please enter a valid amount.";
+        return;
+      }
+
+      const url = `https://v6.exchangerate-api.com/v6/${apiKey}/latest/${fromCurrency}`;
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          if (data.result === "success") {
+            const rate = data.conversion_rates[toCurrency];
+            const converted = (amount * rate).toFixed(2);
+            const symbol = currencies[toCurrency]?.symbol || toCurrency;
+            document.getElementById('result').textContent = `${amount} ${fromCurrency} = ${symbol} ${converted} ${toCurrency}`;
+          } else {
+            document.getElementById('result').textContent = "Conversion failed.";
+          }
+        })
+        .catch(error => {
+          console.error(error);
+          document.getElementById('result').textContent = "Error during conversion.";
+        });
+    }
+  </script>
+</body>
+</html>
