@@ -72,7 +72,7 @@ Feel free to fork this repo and submit a pull request.
 **Abubakar Ruwa**
 
 - 🌐 [Portfolio](https://elbewhy.github.io/abubakarruwa/)
-- 💼 [LinkedIn](https://www.linkedin.com/ruwabunza)
+- 💼 [LinkedIn](https://www.linkedin.com/in/ruwabunza)
 - 🧑‍💻 [GitHub](https://www.github.com/elbewhy)
 - 📘 [Facebook](https://www.facebook.com/ARBunza)
 
