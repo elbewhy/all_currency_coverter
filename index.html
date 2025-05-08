@@ -109,11 +109,7 @@
   </div>
 
 
-<!-->
---------------------------------
-Developed By Abubakar Ruwa Bunza
---------------------------------
-<!-->
+
   <script>
     const fromSelect = document.getElementById('from_curr');
     const toSelect = document.getElementById('to_curr');
@@ -142,11 +138,7 @@ Developed By Abubakar Ruwa Bunza
       })
       .catch(err => console.error('Failed to load currency data:', err));
 
-/*
---------------------------------
-Developed By Abubakar Ruwa Bunza
---------------------------------
-*/
+
     function populateDropdowns() {
       Object.entries(currencies).forEach(([code, { name, symbol }]) => {
         const text = `${symbol || ''} ${code} - ${name}`;
@@ -167,11 +159,7 @@ Developed By Abubakar Ruwa Bunza
       updateFlags();
     }
 
-/*
---------------------------------
-Developed By Abubakar Ruwa Bunza
---------------------------------
-*/
+
     function updateFlags() {
       const from = currencies[fromSelect.value];
       const to = currencies[toSelect.value];
@@ -194,11 +182,7 @@ Developed By Abubakar Ruwa Bunza
       }
 
       const url = `https://v6.exchangerate-api.com/v6/${apiKey}/latest/${fromCurrency}`;
-/*
---------------------------------
-Developed By Abubakar Ruwa Bunza
---------------------------------
-*/
+
       fetch(url)
         .then(response => response.json())
         .then(data => {
